@@ -53,6 +53,7 @@ print(entities.monitoring_delay)
 def get_ping_infos_for_address():
     # beware since we access entities there is an intermittent spike?
     hostname = entities.entities[4].ip
+    entity = entities.entities[4]
     process = subprocess.Popen(['ping', '-c', '1', hostname],
                                stdout=PIPE, stderr=PIPE)
     stdout, stderr = process.communicate()
@@ -70,6 +71,10 @@ def get_ping_infos_for_address():
     else:
         has_packet_loss = False
     print(ping_time)
+    insertValues("hoho", entity.ip, entity.domain, entity.description, ping_time, has_packet_loss)
+    getAll()
+
+    print("damn son")
     # return [ping_time, has_packet_loss]
 
 
@@ -87,6 +92,9 @@ async def get_ping_infos():
     # [ping_time, has_packet_loss] = get_ping_infos_for_address("8.8.8.8")
     # print(ping_time)
     # print(has_packet_loss)
+    print("damn thats a testtt")
+    getAll()
+
     return {"Hello World"}
 
 
