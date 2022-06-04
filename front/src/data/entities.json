@@ -1,0 +1,36 @@
+
+{
+    "monitoring_delay" :  5, 
+    "entities" : [ 
+        {
+            "ip" : "192.168.1.1",
+            "domain" : "sfr.router",
+            "description" : "Home router"
+        },
+        {
+            "ip" : "192.168.1.61",
+            "domain" : "plex",
+            "description" : "Plex media server"
+        },
+        {
+            "ip" : "192.168.1.95",
+            "domain" : "sfr.tv",
+            "description" : "SFR TV"
+        },
+        {
+            "ip" : "192.168.1.94",
+            "domain" : "nvidia.shield",
+            "description" : "Nvidia Shield pro for TV"
+        },
+        {
+            "ip" : "8.8.8.8",
+            "domain" : "dns-google.public",
+            "description" : "Public DNS from Google"
+        },
+        {
+            "ip" : "213.136.12.232",
+            "domain" : "riot.games",
+            "description" : "Public server from Riot Games"
+        }
+    ]
+}
