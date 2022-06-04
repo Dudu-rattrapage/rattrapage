@@ -1,0 +1,10 @@
+
+Question 1 -> Est ce que l'on doit simplement mesurer le ping entre le serveur et l'adresse distante du json -> séléctionné
+ou bien mesurer le ping entre le client (front-end) et l'adresse distance du json
+ou bien mesurer le temps total entre le ping entre le client et la backEnd d'une part et le backend et l'adresse Json d'autre part.
+
+Question 2 -> Les données du json sont elle uniquement celle de la photo de l'énoncé ?
+
+Question 3 -> Quand doit on realiser les claculs ? De manière continue ou démarrable et stoppable via le front-end
+
+Question 4 -> Y a t-il un fichier.json ou autre necessaire au projet ?
