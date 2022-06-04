@@ -6,11 +6,6 @@ from subprocess import Popen, PIPE
 from fastapi import FastAPI, HTTPException, status
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
-from time import time
-import httpx
-import asyncio
-import os
-import ping3
 
 app = FastAPI()
 
@@ -24,69 +19,35 @@ app.add_middleware(
 )
 
 
-async def request(client):
-    response = await client.get("sfr.router")
-    return response.text
-
-
-async def task():
-    async with httpx.AsyncClient() as client:
-        tasks = [request(client) for i in range(1)]
-        result = await asyncio.gather(*tasks)
-        print(result)
-
-
-@app.get('/')
-async def f():
-    # start = time()
-    # await task()
-    # print("time: ", time() - start)
-    # hostname = "8.8.8.8"
-    # response = os.system("ping -c 1 " + hostname)
-    #
-    # if response == 0:
-    #     print(hostname, 'is up!')
-    # else:
-    #     print(hostname, 'is down!')
-    # r = pyping.ping('google.com')
-    #
-    # if r.ret_code == 0:
-    #     print("Success")
-    # else:
-    #     print("Failed with {}".format(r.ret_code))
-
-    hostname = "192.168.1.1"
+def get_ping_infos_for_address(hostname):
+    # hostname = "192.168.1.1"
     process = subprocess.Popen(['ping', '-c', '1', hostname],
                                stdout=PIPE, stderr=PIPE)
     stdout, stderr = process.communicate()
-    print(stdout)
+
+    # invariant: assume it's always displaying milliseconds
     ping_time = re.search('time=(.*) ms', stdout.decode('utf-8'))
     if ping_time is not None:
         ping_time = float(ping_time.group(1))
-    # time = [x for x in stdout.decode('utf-8').split('\n') if x.find('time=') != -1][0].split('ms')[0]
-    print("lel")
-    print(ping_time)
-    print("lol")
+
     packetloss = float(
         [x for x in stdout.decode('utf-8').split('\n') if x.find('packet loss') != -1][0].split('%')[0].split(' ')[-1])
-    print("Loss is %s percent" % packetloss)
 
+    if packetloss > 0.0:
+        has_packet_loss = True
+    else:
+        has_packet_loss = False
+    return [ping_time, has_packet_loss]
+
+
+# fixme: check ping windows support
+@app.get('/')
+async def get_ping_infos():
+    [ping_time, has_packet_loss] = get_ping_infos_for_address("8.8.8.8")
+    print(ping_time)
+    print(has_packet_loss)
     return {"Hello World"}
 
-
-# @app.get("/")
-# async def read_item():
-#     print("damn son")
-#
-#     response = app.get("sfr.router")
-#     print(response)
-#     print("damn daughter")
-#     return {"Hello World"}
-
-
-# @app.post("/add")
-# async def add():
-#   d
 
 @app.get("/items/{item_id}")
 async def read_item(item_id):
