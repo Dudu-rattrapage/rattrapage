@@ -18,9 +18,6 @@ app.add_middleware(
 async def read_item():
   return {"Hello World"}
 
-@app.post("/add")
-async def add():
-  d
 
 @app.get("/items/{item_id}")
 async def read_item(item_id):
