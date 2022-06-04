@@ -3,9 +3,13 @@
 import re
 import subprocess
 from subprocess import Popen, PIPE
+from types import SimpleNamespace
+
 from fastapi import FastAPI, HTTPException, status
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
+from ischedule import schedule, run_loop
+import json
 
 app = FastAPI()
 
@@ -18,9 +22,16 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+with open('data/entities.json') as file:
+    # Parse JSON into an object with attributes corresponding to dict keys.
+    entities = json.loads(file.read(), object_hook=lambda d: SimpleNamespace(**d))
 
-def get_ping_infos_for_address(hostname):
-    # hostname = "192.168.1.1"
+print(entities.monitoring_delay)
+
+
+def get_ping_infos_for_address():
+    # beware since we access entities there is an intermittent spike?
+    hostname = entities.entities[4].ip
     process = subprocess.Popen(['ping', '-c', '1', hostname],
                                stdout=PIPE, stderr=PIPE)
     stdout, stderr = process.communicate()
@@ -37,15 +48,24 @@ def get_ping_infos_for_address(hostname):
         has_packet_loss = True
     else:
         has_packet_loss = False
-    return [ping_time, has_packet_loss]
+    print(ping_time)
+    # return [ping_time, has_packet_loss]
+
+
+# dezoom
+# https://pypi.org/project/ischedule/
+# see also https://pypi.org/project/schedule/
+# fixme replace 2 with var
+schedule(get_ping_infos_for_address, interval=2)
+run_loop()
 
 
 # fixme: check ping windows support
 @app.get('/')
 async def get_ping_infos():
-    [ping_time, has_packet_loss] = get_ping_infos_for_address("8.8.8.8")
-    print(ping_time)
-    print(has_packet_loss)
+    # [ping_time, has_packet_loss] = get_ping_infos_for_address("8.8.8.8")
+    # print(ping_time)
+    # print(has_packet_loss)
     return {"Hello World"}
 
 
