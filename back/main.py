@@ -10,6 +10,7 @@ from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from ischedule import schedule, run_loop
 import json
+import sqlite3
 
 app = FastAPI()
 
@@ -21,6 +22,26 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+def insertValues(TimeStamp,Ip,Domain,Description,Ping,PacketLoss):
+    conn = sqlite3.connect('BDD/rattrapage.db')
+    c = conn.cursor()
+    data = (TimeStamp, Ip, Domain, Description, Ping, PacketLoss)
+    c.execute("INSERT INTO ping_request_results (TimeStamp, IP, Domain, Description, Ping, PacketLoss) VALUES (?,?,?,?,?,?);"
+    ,data)
+    print("Values insert sucessfuly")
+    conn.commit()
+    conn.close()
+
+def getAll():
+    conn = sqlite3.connect('BDD/rattrapage.db')
+    c = conn.cursor()
+    c.execute("SELECT * FROM ping_request_results")
+    list = c.fetchall()
+    conn.commit()
+    conn.close()
+    print(list)
+    return list
 
 with open('data/entities.json') as file:
     # Parse JSON into an object with attributes corresponding to dict keys.
@@ -72,3 +93,4 @@ async def get_ping_infos():
 @app.get("/items/{item_id}")
 async def read_item(item_id):
     return {"item_id": item_id}
+
