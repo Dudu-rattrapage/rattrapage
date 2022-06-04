@@ -18,7 +18,7 @@ c.execute('''CREATE TABLE IF NOT EXISTS ping_request_results (
 
 #Datatypes : NULL, INTEGER, REAL, TEXT, BLOB
 
-#Cpmmit our command
+#Commit our command
 conn.commit()
 
 #close connection
