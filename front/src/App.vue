@@ -1,19 +1,28 @@
 <template>
 <div>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-  <img alt="Vue logo" src="./assets/logo.png">
-  <Home/>
+  <BarChart/>
+  <LineChart/>
 </div>
 </template>
 
 <script>
-import Home from './components/Home.vue'
+import axios from "axios";
+import BarChart from './components/BarChart.vue'
+import LineChart from './components/LineChart.vue'
 
 export default {
-  name: 'App',
-  components: {
-    Home
-  }
+name: 'App',
+components: {
+    BarChart,
+    LineChart
+},
+mounted () {
+    axios.get('http://127.0.0.1:8000/')
+    .then(response => {
+        console.log('test',response);
+    });
+}
 }
 </script>
 
