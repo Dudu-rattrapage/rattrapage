@@ -15,6 +15,7 @@ import json
 import sqlite3
 
 from BDD.init import initialize_db_tables, reset_database
+from fastapi_utils.tasks import repeat_every
 
 app = FastAPI()
 
@@ -87,6 +88,9 @@ def insert_ping_infos_for_entity(entity: any):
 
 
 # async??
+# https://fastapi-utils.davidmontague.xyz/user-guide/repeated-tasks/
+@app.on_event("startup")
+@repeat_every(seconds=entities_obj.monitoring_delay)
 def insert_ping_infos_for_each_address():
     entities = entities_obj.entities
     for entity in entities:
@@ -127,8 +131,8 @@ def get_ping_infos_for_each_address():
 
 # https://pypi.org/project/ischedule/
 # see also https://pypi.org/project/schedule/
-schedule(insert_ping_infos_for_each_address, interval=entities_obj.monitoring_delay)
-run_loop()
+# schedule(insert_ping_infos_for_each_address, interval=entities_obj.monitoring_delay)
+# run_loop()
 
 
 # fixme: check ping windows support
@@ -140,6 +144,7 @@ async def get_ping_infos():
     print("damn thats a testtt")
 
     return get_ping_infos_for_each_address()
+    # return {"lol": "hehe"}
 
 
 @app.get("/items/{item_id}")
