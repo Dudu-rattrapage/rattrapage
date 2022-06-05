@@ -2,6 +2,7 @@
 # rajouter /docs pour avoir acces au swagger
 import re
 import subprocess
+import time
 from subprocess import Popen, PIPE
 from types import SimpleNamespace
 
@@ -34,7 +35,7 @@ app.add_middleware(
 def insertValues(TimeStamp, Ip, Domain, Description, Ping, PacketLoss):
     conn = sqlite3.connect('rattrapage.db')
     c = conn.cursor()
-    data = (TimeStamp, Ip, Domain, Description, Ping, PacketLoss)
+    data = (time.strftime('%Y-%m-%d %H:%M:%S'), Ip, Domain, Description, Ping, PacketLoss)
     c.execute(
         "INSERT INTO ping_request_results (TimeStamp, IP, Domain, Description, Ping, PacketLoss) VALUES (?,?,?,?,?,?);"
         , data)
@@ -91,7 +92,8 @@ def insert_ping_infos_for_each_address():
     for entity in entities:
         insert_ping_infos_for_entity(entity)
 
-    getAll()
+    results = getAll()
+
     print("damn son")
 
     # return [ping_time, has_packet_loss]

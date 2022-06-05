@@ -33,6 +33,7 @@ def initialize_db_tables():
     c = conn.cursor()
 
     # create table
+    # Timestamp DATETIME default CURRENT_TIMESTAMP not null,
     c.execute('''CREATE TABLE IF NOT EXISTS ping_request_results (
         Timestamp text,
         Ip text,
@@ -50,10 +51,8 @@ def initialize_db_tables():
     # close connection
     conn.close()
 
-
 def reset_database():
     # connect to database test
-
     conn = sqlite3.connect('rattrapage.db')
 
     # create cursor
