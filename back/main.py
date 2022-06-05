@@ -23,15 +23,18 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-def insertValues(TimeStamp,Ip,Domain,Description,Ping,PacketLoss):
+
+def insertValues(TimeStamp, Ip, Domain, Description, Ping, PacketLoss):
     conn = sqlite3.connect('BDD/rattrapage.db')
     c = conn.cursor()
     data = (TimeStamp, Ip, Domain, Description, Ping, PacketLoss)
-    c.execute("INSERT INTO ping_request_results (TimeStamp, IP, Domain, Description, Ping, PacketLoss) VALUES (?,?,?,?,?,?);"
-    ,data)
+    c.execute(
+        "INSERT INTO ping_request_results (TimeStamp, IP, Domain, Description, Ping, PacketLoss) VALUES (?,?,?,?,?,?);"
+        , data)
     print("Values insert sucessfuly")
     conn.commit()
     conn.close()
+
 
 def getAll():
     conn = sqlite3.connect('BDD/rattrapage.db')
@@ -43,17 +46,17 @@ def getAll():
     print(list)
     return list
 
+
 with open('data/entities.json') as file:
     # Parse JSON into an object with attributes corresponding to dict keys.
-    entities = json.loads(file.read(), object_hook=lambda d: SimpleNamespace(**d))
+    entities_obj = json.loads(file.read(), object_hook=lambda d: SimpleNamespace(**d))
 
-print(entities.monitoring_delay)
+print(entities_obj.monitoring_delay)
 
 
-def get_ping_infos_for_address():
+def insert_ping_infos_for_entity(entity: any):
+    hostname = entity.ip
     # beware since we access entities there is an intermittent spike?
-    hostname = entities.entities[4].ip
-    entity = entities.entities[4]
     process = subprocess.Popen(['ping', '-c', '1', hostname],
                                stdout=PIPE, stderr=PIPE)
     stdout, stderr = process.communicate()
@@ -72,17 +75,23 @@ def get_ping_infos_for_address():
         has_packet_loss = False
     print(ping_time)
     insertValues("hoho", entity.ip, entity.domain, entity.description, ping_time, has_packet_loss)
-    getAll()
 
+
+# async??
+def insert_ping_infos_for_each_address():
+    entities = entities_obj.entities
+    for entity in entities:
+        insert_ping_infos_for_entity(entity)
+
+    getAll()
     print("damn son")
+
     # return [ping_time, has_packet_loss]
 
 
-# dezoom
 # https://pypi.org/project/ischedule/
 # see also https://pypi.org/project/schedule/
-# fixme replace 2 with var
-schedule(get_ping_infos_for_address, interval=2)
+schedule(insert_ping_infos_for_each_address, interval=entities_obj.monitoring_delay)
 run_loop()
 
 
@@ -101,4 +110,3 @@ async def get_ping_infos():
 @app.get("/items/{item_id}")
 async def read_item(item_id):
     return {"item_id": item_id}
-
