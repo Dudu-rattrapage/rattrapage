@@ -1,10 +1,11 @@
 
-Question 1 -> Est ce que l'on doit simplement mesurer le ping entre le serveur et l'adresse distante du json -> séléctionné
+Question 1 -> Est ce que l'on doit simplement mesurer le ping entre le serveur et l'adresse distante du json
 ou bien mesurer le ping entre le client (front-end) et l'adresse distance du json
-ou bien mesurer le temps total entre le ping entre le client et la backEnd d'une part et le backend et l'adresse Json d'autre part.
 
-Question 2 -> Les données du json sont elle uniquement celle de la photo de l'énoncé ?
+Question 2 -> Les données du json sont elle vraiment celle de l'énoncé car il n'est possible de ping uniquepment les adresses de Google DNS et Riot games ? Est ce que vous aurez une solution à cela?
 
-Question 3 -> Quand doit on realiser les claculs ? De manière continue ou démarrable et stoppable via le front-end
+Question 3 -> Quand doit on realiser les calculs ? De manière continue ou démarrable et stoppable via le front-end ?
 
-Question 4 -> Y a t-il un fichier.json ou autre necessaire au projet ?
+Question 4 -> Ya -t-il une méthode recommandée pour pinger en python ou on peux utiliser toutes les librairies. Il semblerait que les librairies en python disponibles ne font qu'executer le binaire standart "ping" fournit par linux et windows et affiche le resultat dans le termianl
+Ainsi pour récupérer les infos utiles tel que la packet lost il nous faut parser (trouver la valeur du string affiché) l'output standart (du terminal).
+Je ne pense pas que ce soit ce qui est attendu donc qu'est ce que vous en pensez ?
