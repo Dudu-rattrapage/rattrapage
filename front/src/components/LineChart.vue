@@ -9,7 +9,7 @@
 <script>
 import Chart from 'chart.js/auto';
 export default {
-  name: 'Home',
+  name: 'LineChart',
   data(){
     return {
         labels : ['Home router', 'Plex media', 'SFR TV', 'Nvidia Shield', 'DNS Google', 'Riot Games'],
