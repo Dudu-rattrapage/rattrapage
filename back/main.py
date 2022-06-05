@@ -1,5 +1,6 @@
 # http://127.0.0.1:8000/ -> adresse serveur
 # rajouter /docs pour avoir acces au swagger
+import copy
 import re
 import subprocess
 import time
@@ -16,7 +17,6 @@ import sqlite3
 from BDD.init import initialize_db_tables, reset_database
 
 app = FastAPI()
-
 
 # initialize_db_tables()
 # reset_database()
@@ -51,7 +51,7 @@ def getAll():
     list = c.fetchall()
     conn.commit()
     conn.close()
-    print(list)
+    # print(list)
     return list
 
 
@@ -92,11 +92,37 @@ def insert_ping_infos_for_each_address():
     for entity in entities:
         insert_ping_infos_for_entity(entity)
 
+    print("wow")
+    # return [ping_time, has_packet_loss]
+
+
+def get_ping_infos_for_each_address():
+    entities = entities_obj.entities
+
+    response = copy.deepcopy(entities)
+    for entity in response:
+        entity.ping_metadata = []
+        # nullable members
+        entity.pings = []
+        entity.has_packet_loss = []
+        entity.timestamps = []
+
     results = getAll()
+    for entity in response:
+        for result in results:
+            # if domains match
+            if result[2] == entity.domain:
+                entity.ping_metadata.append(result)
+        # sort by time
+        entity.ping_metadata.sort(key=lambda x: time.mktime(time.strptime(x[0], '%Y-%m-%d %H:%M:%S')))
+        for column in entity.ping_metadata:
+            entity.timestamps.append(column[0])
+            entity.pings.append(column[4])
+            entity.has_packet_loss.append(column[5])
 
     print("damn son")
-
-    # return [ping_time, has_packet_loss]
+    print(response[0].timestamps)
+    return response
 
 
 # https://pypi.org/project/ischedule/
@@ -112,9 +138,8 @@ async def get_ping_infos():
     # print(ping_time)
     # print(has_packet_loss)
     print("damn thats a testtt")
-    getAll()
 
-    return {"Hello World"}
+    return get_ping_infos_for_each_address()
 
 
 @app.get("/items/{item_id}")
