@@ -12,7 +12,14 @@ from ischedule import schedule, run_loop
 import json
 import sqlite3
 
+from BDD.init import initialize_db_tables, reset_database
+
 app = FastAPI()
+
+
+# initialize_db_tables()
+# reset_database()
+initialize_db_tables()
 
 origins = ["*"]
 app.add_middleware(
@@ -25,7 +32,7 @@ app.add_middleware(
 
 
 def insertValues(TimeStamp, Ip, Domain, Description, Ping, PacketLoss):
-    conn = sqlite3.connect('BDD/rattrapage.db')
+    conn = sqlite3.connect('rattrapage.db')
     c = conn.cursor()
     data = (TimeStamp, Ip, Domain, Description, Ping, PacketLoss)
     c.execute(
@@ -37,7 +44,7 @@ def insertValues(TimeStamp, Ip, Domain, Description, Ping, PacketLoss):
 
 
 def getAll():
-    conn = sqlite3.connect('BDD/rattrapage.db')
+    conn = sqlite3.connect('rattrapage.db')
     c = conn.cursor()
     c.execute("SELECT * FROM ping_request_results")
     list = c.fetchall()
@@ -57,6 +64,7 @@ print(entities_obj.monitoring_delay)
 def insert_ping_infos_for_entity(entity: any):
     hostname = entity.ip
     # beware since we access entities there is an intermittent spike?
+    # todo windows support: https://stackoverflow.com/questions/2953462/pinging-servers-in-python
     process = subprocess.Popen(['ping', '-c', '1', hostname],
                                stdout=PIPE, stderr=PIPE)
     stdout, stderr = process.communicate()
