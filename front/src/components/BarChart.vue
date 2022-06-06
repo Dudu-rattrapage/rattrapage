@@ -10,21 +10,33 @@
 import Chart from 'chart.js/auto';
 export default {
   name: 'BarChart',
+  props : ['entities'],
   data(){
-    return {
-        labels : ['Home router', 'Plex media', 'SFR TV', 'Nvidia Shield', 'DNS Google', 'Riot Games'],
-        datas : [12, 19, 3, 5, 2, 3],
-    }
   },
    mounted () {
     var ctx = document.getElementById("barChart");
+
+    var labels = this.entities.value.map(e => e.domain);
+    this.entities.value.forEach(e => {
+        e.total_packet_lost=0;
+        e.has_packet_loss.forEach(i=>{
+            if(i==1){
+                e.total_packet_lost++;
+            }
+        })
+    });
+    var totals = []
+    this.entities.value.forEach(e=>{
+        totals.push(e.total_packet_lost);
+    })
+    console.log("total",totals);
     const myChart = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: this.labels ,
+            labels: labels ,
             datasets: [{
-                label: this.labels,
-                data: this.datas,
+                label: labels,
+                data: totals,
                 backgroundColor: [
                     'rgba(255, 99, 132, 0.2)',
                     'rgba(54, 162, 235, 0.2)',
